@@ -1,5 +1,4 @@
-var SerialPort = require('serialport').SerialPort;
-var Parsers = require('serialport').parsers;
+var SerialPort = require('serialport');
 var Pdu = require('./pdu');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
@@ -149,7 +148,8 @@ Modem.prototype.connect = function (cb) {
  */
 Modem.prototype.connectPort = function (port, cb) {
   var serialPort = new SerialPort(port, {
-    baudrate: 115200
+    baudRate: 115200,
+    parser: SerialPort.parsers.raw
   });
 
   var commandTimeout = null;
@@ -1062,7 +1062,7 @@ Modem.prototype.readDeleteZTE_SR = function (cb) {
  * Requests custom USSD
  */
 Modem.prototype.getUSSD = function (ussd, cb) {
-  if (this.manufacturer.indexOf('HUAWEI') !== -1) {
+  if (this.manufacturer && this.manufacturer.indexOf('HUAWEI') !== -1) {
     ussd = Pdu.ussdEncode(ussd);
   }
   this.sendCommand('AT+CUSD=1,"' + ussd + '",15', function (data) {
