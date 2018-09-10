@@ -1070,7 +1070,7 @@ Modem.prototype.getUSSD = function (ussd, cb) {
       var processed = false;
       var USSDHandler = function (status, data, dcs) {
         processed = true;
-        if (status === 1) { //cancel USSD session
+        if (status === 0) { //cancel USSD session
           this.sendCommand('AT+CUSD=2');
         }
         var encoding = Pdu.detectEncoding(dcs);
