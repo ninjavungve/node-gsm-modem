@@ -1,32 +1,26 @@
 var Modem = require('./');
 
-
-function onSMS (sms) {
-    console.log('onSMS', sms);
-}
-function onUSSD (ussd) {
-    console.log('onUSSD', ussd);
-}
-function onStatusReport (report) {
-    console.log('onStatusReport', report);
-}
-function onDisconnect (modem) {
-    console.log('onDisconnect');
-}
-
-
 var modem1 = new Modem({
     port : '/dev/ttyUSB0',
     notify_port : '/dev/ttyUSB1',
-    onDisconnect : onDisconnect,
+    onDisconnect : function (modem) {
+        console.log('onDisconnect');
+    },
     balance_ussd : '*102*1#',
     dollar_regexp : /(-?\d+)\s*rub/,
     cents_regexp : /(-?\d+)\s*kop/,
     debug : true
 });
-modem1.on('message', onStatusReport);
-modem1.on('report', onStatusReport);
-modem1.on('USSD', onUSSD);
+
+// where you received the mesage
+modem1.on('message', function (sms) {
+    console.log('onSMS', sms);
+});
+
+// trigger USSD event
+modem1.on('USSD', function (ussd) {
+    console.log('onUSSD', ussd);
+});
 
 modem1.connect(function () {
 
@@ -36,7 +30,7 @@ modem1.connect(function () {
 
     modem1.sendSMS({
         receiver : 'ENTER YOUR NUMBER HERE',
-        text : 'Проверка связи, однако!',
+        text : 'ENTER YOUR MESSAGE CONTENT HERE!',
         request_status : true
     }, function (err, data) {
         console.log('sendSMS', data);
